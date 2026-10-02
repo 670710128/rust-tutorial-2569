@@ -1100,7 +1100,7 @@ Perplexity ใช้ในการหา concept ตรวจสอบโดย
 
 **Chapter Path:** `[https://github.com/soonklang/rust-tutorial-2569/tree/main/07-iterative-structures]`
 
-**Final PR:** `#[29]`
+**Final PR:** `#[30]`
 
 **Submitted by:** `[Group 7]`
 
