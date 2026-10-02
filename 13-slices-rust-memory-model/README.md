@@ -271,57 +271,233 @@ fn main() {
 
 ### 9.1 Syntax
 
-`[Topic นี้เกี่ยวข้องกับ syntax อย่างไร]`
+รูปแบบไวยากรณ์ของ Slices ใน Rust ใช้เครื่องหมาย & ร่วมกับช่วงข้อมูล [..] เพื่อสร้าง reference ที่อ้างถึงข้อมูลบางส่วนของ collection โดยไม่ต้องคัดลอกข้อมูลทั้งหมด
+
+**ตัวอย่าง**
+
+```rust
+fn main() {
+    let numbers = [10, 20, 30, 40, 50];
+    let slice = &numbers[1..4];
+
+    println!("{:?}", slice); // [20, 30, 40]
+}
+```
+รูปแบบไวยากรณ์ที่สำคัญ
+
+- `&collection[start..end]` — อ้างอิงสมาชิกตั้งแต่ `start` ถึงก่อน `end`
+- `&collection[..end]` — เริ่มตั้งแต่ต้นจนถึงก่อน `end`
+- `&collection[start..]` — เริ่มจาก `start` จนถึงท้ายข้อมูล
+- `&collection[..]` — อ้างอิงข้อมูลทั้งหมดในรูปแบบ slice
 
 ### 9.2 Semantics
 
-`[คำสั่ง/construct เหล่านี้มีความหมายหรือพฤติกรรมอย่างไร]`
+ในด้าน Semantics สิ่งที่สำคัญคือ Slice ไม่ได้สร้างข้อมูลชุดใหม่ขึ้นมา แต่เป็นการอ้างถึงข้อมูลที่มีอยู่แล้ว
+
+**ตัวอย่าง**
+
+```rust
+fn main() {
+    let text = String::from("Rust Language");
+    let part = &text[0..4];
+
+    println!("{}", part); // Rust
+}
+```
+ตัวแปร `part` จะอ้างถึงบางส่วนของ `text` ดังนั้นข้อมูลจริงยังอยู่ใน `text` และ `part` ไม่ได้เป็นเจ้าของข้อมูลนั้น
+อีกเรื่องที่ควรรู้คือ Range แบบ `0..4` จะเอาตั้งแต่ตำแหน่ง 0 ถึงก่อนตำแหน่ง 4 
 
 ### 9.3 Type System
 
-`[เกี่ยวข้องกับ type system อย่างไร ถ้ามี]`
+Slice เกี่ยวข้องกับระบบชนิดข้อมูลของ Rust โดยชนิดข้อมูลระบุว่าข้อมูลที่ถูกอ้างอิงมีรูปแบบ ดังนี้
+
+- `&[i32]` คือ immutable slice ที่อ้างถึงสมาชิกชนิด `i32`
+- `&mut [i32]` คือ mutable slice ที่อนุญาตให้แก้ไขสมาชิกผ่าน reference ที่ยืมมาได้
+- `&str` คือ string slice สำหรับอ้างอิงข้อความ UTF-8 ที่ถูกต้อง
+- `&[T]` เป็น slice ที่ใช้กับสมาชิกชนิด `T` ได้หลายชนิด
+
+**ตัวอย่าง**
+
+```rust
+fn main() {
+    let mut data = [1, 2, 3, 4];
+
+    let part: &[i32] = &data[1..3];
+    println!("{:?}", part); // [2, 3]
+
+    let part_mut: &mut [i32] = &mut data[1..3];
+    part_mut[0] = 20;
+
+    println!("{:?}", data); // [1, 20, 3, 4]
+}
+```
+Type System ช่วยให้ compiler ตรวจสอบความเข้ากันได้ของชนิดข้อมูลและข้อจำกัดในการยืมข้อมูลได้ เช่น ตรงนี้ Compiler จะรู้ว่า `part` เป็น Slice ของ `i32` ทำให้ช่วยตรวจสอบ Type ก่อน Compile ได้
 
 ### 9.4 Memory / Resource Management
 
-`[เกี่ยวข้องกับ memory หรือ resource management อย่างไร ถ้ามี]`
+Rust แบ่งการจัดการข้อมูลตามลักษณะของ Memory โดยทั่วไปจะพูดถึง Stack และ Heap ข้อมูลบางอย่างที่มีขนาดคงที่สามารถอยู่บน Stack ได้ ส่วนข้อมูลที่ต้องจองพื้นที่แบบ Dynamic เช่น `Vec` หรือข้อมูลภายใน `String` จะเกี่ยวข้องกับ Heap 
+ด้วยการจัดการหน่วยความจำผ่าน ownership, borrowing และการกำหนดอายุการใช้งานของ reference (lifetime) โดยไม่จำเป็นต้องใช้ garbage collector 
+
+- Stack: มักใช้เก็บค่าขนาดคงที่และ metadata ของตัวแปรบางชนิด เช่น pointer, length และ capacity ของ `Vec`
+- Heap: ใช้จัดเก็บข้อมูลที่มีขนาดหรืออายุการใช้งานยืดหยุ่น เช่น buffer ของ `String` และ `Vec`
+- Slice: โดยทั่วไปเป็น reference ที่ประกอบด้วย pointer และ length ซึ่งชี้ไปยังข้อมูลเดิม
+- Ownership relationship: Slice ไม่ได้เป็นเจ้าของข้อมูล แต่ยืมข้อมูลจากเจ้าของเดิม และไม่สามารถมี lifetime นานกว่าข้อมูลที่อ้างถึงได้
+
+**ตัวอย่าง**
+
+```rust
+fn main() {
+    let values = vec![10, 20, 30, 40];
+    let part = &values[1..3];
+
+    println!("{:?}", part); // [20, 30]
+}
+```
+ในกรณีนี้ `values` เป็นเจ้าของข้อมูล ส่วน `part` เป็น Slice ที่อ้างถึงข้อมูลของ `values` โดยไม่ได้สร้าง vector ใหม่
+ดังนั้นถ้า `values` ถูกทำลายไปแล้ว `part` ก็ไม่สามารถเอาไปใช้งานต่อได้ จุดนี้เกี่ยวข้องกับ Ownership และ Lifetime ของ Rust โดยตรง
 
 ### 9.5 Abstraction / Other PPL Concepts
 
-`[อธิบาย abstraction, scope, binding, paradigm หรือแนวคิด PPL อื่นที่เกี่ยวข้อง]`
+Slice เป็น Abstraction ที่ทำให้เราเลือกทำงานกับข้อมูลบางส่วนได้ โดยไม่ต้องจัดการ Memory Address เอง
+
+**ตัวอย่าง**
+
+```rust
+fn print_data(data: &[i32]) {
+    println!("{:?}", data);
+}
+```
+ฟังก์ชันนี้รับ `&[i32]` ทำให้สามารถรับ Slice จากข้อมูลชนิดที่เหมาะสมได้ โดยไม่ต้องสร้าง Array ใหม่ขึ้นมา
+นอกจากนี้ยังเกี่ยวข้องกับ
+**Other PPL Concepts**
+- Scope: กำหนดขอบเขตที่ตัวแปรและ reference สามารถใช้งานได้
+- Binding: ชื่ออย่าง `values` และ `part` ถูกผูกกับค่าหรือ reference ที่เกี่ยวข้อง โดย part ไม่ได้เป็นเจ้าของข้อมูลต้นทาง
+- Lifetime: กำหนดความสัมพันธ์ระหว่างอายุของ reference กับข้อมูลที่ถูกอ้างถึง เพื่อป้องกัน dangling references
+- Paradigm: สนับสนุนแนวคิด procedural และ generic programming พร้อมใช้ระบบ ownership และ borrowing เพื่อควบคุมการเข้าถึงข้อมูล
 
 ### 9.6 Why Rust?
 
-`[Rust ใช้แนวคิดนี้เพื่อเพิ่ม safety, reliability หรือ performance อย่างไร]`
+Rust ออกแบบระบบ Slice และ Memory Model เพื่อให้โปรแกรมจัดการข้อมูลได้อย่างปลอดภัยและมีประสิทธิภาพ ดังนี้
+
+- Memory Safety: กฎ ownership และ lifetime ช่วยป้องกัน dangling references และการใช้ข้อมูลหลังหมดอายุ
+- Reliability: Borrow Checker ตรวจสอบข้อจำกัดในการยืมข้อมูล เพื่อป้องกันการเข้าถึงที่ขัดแย้งกันตามกฎของ Rust
+- Performance: Slice ช่วยให้เข้าถึงข้อมูลบางส่วนได้โดยไม่ต้องคัดลอก collection ทั้งหมด
+- Concurrency Safety: กฎการยืมช่วยป้องกัน data race ในกรณีที่การเข้าถึงข้อมูลไม่เป็นไปตามเงื่อนไขความปลอดภัยของ Rust
+- No Garbage Collector: Rust ใช้ ownership และกลไกการทำลายค่าตาม scope เพื่อจัดการทรัพยากร โดยทั่วไปไม่ต้องอาศัย garbage collector
+
+สรุป: Slices เป็นแนวคิดที่เชื่อมโยง Syntax, Semantics, Type System และ Memory Management เข้าด้วยกัน โดยอาศัย ownership และ borrowing เพื่อให้เข้าถึงข้อมูลได้อย่างมีประสิทธิภาพและปลอดภัย
 
 ---
 
 ## 10. Rust vs. Other Language
 
-**Comparison Language:** `[Python / C / C++ / Java / Kotlin / ...]`
+**Comparison Language:** `Java`
 
-| Aspect | Rust | Other Language |
+| Aspect | Rust | Java |
 |---|---|---|
-| Syntax | `[อธิบาย]` | `[อธิบาย]` |
-| Semantics / Behavior | `[อธิบาย]` | `[อธิบาย]` |
-| Type System | `[อธิบาย]` | `[อธิบาย]` |
-| Memory Management | `[อธิบาย]` | `[อธิบาย]` |
-| Safety | `[อธิบาย]` | `[อธิบาย]` |
+| Syntax | ใช้ `&[start..end]` เพื่อสร้าง slice และ `&str` สำหรับ string slice | `[อธิบาย]` |
+| Semantics / Behavior | Slice เป็น borrowed view ของข้อมูลเดิม ไม่ได้เป็นเจ้าของข้อมูล | `[อธิบาย]` |
+| Type System | Static + strong typing และมี `&[T]`, `&mut [T]`, `&str` พร้อม borrow checking | `[อธิบาย]` |
+| Memory Management | จัดการด้วย Ownership, Borrowing, Lifetime ไม่มี Garbage Collector | `[อธิบาย]` |
+| Safety | เน้น memory safety และ compiler ตรวจสอบ borrowing ก่อน compile | `[อธิบาย]` |
 
 ### Rust Example
-
+ตัวอย่าง Slice ของ Array
 ```rust
-// Rust code
-```
+fn main() {
+    let numbers = [10, 20, 30, 40, 50];
 
-### `[Other Language]` Example
+    let slice = &numbers[1..4];
 
-```python
-# Other language code
+    println!("{:?}", slice);
+}
 ```
+ผลลัพธ์
+```rust
+[20, 30, 40]
+```
+จุดสำคัญคือ `&numbers[1..4]` ไม่ได้สร้าง Array ใหม่ แต่เป็น reference ที่มองข้อมูลบางส่วนของ Array เดิม
 
 ### Analysis
 
-`[อธิบายความแตกต่างที่สำคัญ และเหตุผลด้านการออกแบบภาษา]`
+ความแตกต่างสำคัญ: Rust ใช้แนวคิด Ownership, Borrowing และ References ในการจัดการหน่วยความจำ โดย Slice เช่น `&[T]` และ `&str` เป็นการอ้างอิงข้อมูลเดิมโดยไม่ต้องเป็นเจ้าของข้อมูล และ Compiler จะตรวจสอบกฎของการ Borrow เพื่อป้องกันปัญหาด้าน Memory เช่น Dangling Reference และการเข้าถึงข้อมูลที่ขัดแย้งกัน
+
+เหตุผลด้านการออกแบบ: Rust ออกแบบระบบ Ownership และ Borrowing เพื่อให้ได้ทั้ง Memory Safety และ Performance โดยไม่จำเป็นต้องใช้ Garbage Collector ทำให้สามารถควบคุมทรัพยากรได้ในระดับ Compile Time และยังสามารถใช้ Slice เพื่อเข้าถึงข้อมูลบางส่วนโดยไม่ต้อง Copy ข้อมูลทั้งหมด
+
+### Python Example
+
+```python
+numbers = [10, 20, 30, 40, 50]
+
+slice = numbers[1:4]
+
+print(slice)
+```
+ผลลัพธ์
+```python
+[20, 30, 40]
+```
+Python มี syntax สำหรับ slicing ที่ง่ายมาก คือ `numbers[start:end]` แต่การ slice `list` จะสร้าง list ใหม่ แทนที่จะเป็น borrowed slice แบบ Rust
+
+### Analysis
+
+ความแตกต่างสำคัญ: Python มี Syntax สำหรับ Slice ที่ใช้งานง่าย เช่น `list[start:end]` และ `string[start:end]` แต่การ Slice ของ `list` โดยทั่วไปจะสร้าง List ใหม่ขึ้นมา ขณะที่ Rust Slice เป็น Reference ที่มองข้อมูลเดิม นอกจากนี้ Python จัดการหน่วยความจำโดยอาศัย Runtime มากกว่าให้ Programmer ควบคุมโดยตรง
+
+เหตุผลด้านการออกแบบ: Python เน้น ความง่ายในการเขียนโปรแกรมและ Abstraction ระดับสูง จึงออกแบบให้การจัดการ Memory เป็นหน้าที่ของ Runtime และมี Syntax ของ Slice ที่กระชับ ทำให้ Programmer สามารถจัดการข้อมูลเป็นช่วงได้ง่ายโดยไม่ต้องจัดการ Pointer และ Memory Address โดยตรง
+
+### Java Example
+
+```java
+public class Main {
+    public static void main(String[] args) {
+        int[] numbers = {10, 20, 30, 40, 50};
+
+        int[] slice = java.util.Arrays.copyOfRange(numbers, 1, 4);
+
+        System.out.println(java.util.Arrays.toString(slice));
+    }
+}
+```
+ผลลัพธ์
+```java
+[20, 30, 40]
+```
+Java มี `Arrays.copyOfRange()` สำหรับเลือกข้อมูลเป็นช่วง แต่จะทำการ copy ข้อมูลออกมาเป็น array ใหม่ 
+ดังนั้นจึงแตกต่างจาก Rust ที่ slice สามารถเป็น view ของข้อมูลเดิมได้
+
+### Analysis
+
+ความแตกต่างสำคัญ: Java ใช้ Reference สำหรับการอ้างถึง Object และ Array และมี Garbage Collector ช่วยจัดการ Memory ส่วน Rust ใช้ Ownership และ Borrowing เพื่อตรวจสอบการเป็นเจ้าของข้อมูลตั้งแต่ Compile Time สำหรับการเลือกช่วงข้อมูลของ Array ใน Java มักใช้การ Copy ข้อมูลผ่าน API เช่น `Arrays.copyOfRange()` ซึ่งแตกต่างจาก Rust Slice ที่สามารถอ้างถึงข้อมูลเดิมได้
+
+เหตุผลด้านการออกแบบ: Java ถูกออกแบบให้เน้น Portability, Abstraction และ Automatic Memory Management จึงใช้ Garbage Collector เพื่อลดภาระในการจัดการ Memory ของ Programmer ขณะที่ Rust เลือกใช้ Ownership เพื่อให้สามารถควบคุม Memory ได้โดยไม่ต้องพึ่ง Garbage Collector
+### C Example
+
+```c
+#include <stdio.h>
+
+int main() {
+    int numbers[] = {10, 20, 30, 40, 50};
+
+    int *slice = &numbers[1];
+
+    for (int i = 0; i < 3; i++) {
+        printf("%d ", slice[i]);
+    }
+
+    return 0;
+}
+```
+ผลลัพธ์
+```c
+20 30 40
+```
+ใน C เราสามารถใช้ pointer เพื่อชี้ไปยังตำแหน่งหนึ่งของ array ได้โดยตรง แต่ C ไม่ได้ตรวจสอบเรื่อง ownership หรือ lifetime ให้อัตโนมัติแบบ Rust
+
+### Analysis
+
+ความแตกต่างสำคัญ: C สามารถเข้าถึงข้อมูลใน Array ผ่าน Pointer และ Address ได้โดยตรง ทำให้สามารถสร้างแนวคิดที่คล้าย Slice ได้ เช่น การใช้ Pointer ชี้ไปยังตำแหน่งเริ่มต้นของข้อมูล แต่ C ไม่มีระบบ Ownership และ Borrow Checking แบบ Rust ดังนั้น Programmer ต้องรับผิดชอบเรื่องขอบเขตและอายุของข้อมูลเอง
+
+เหตุผลด้านการออกแบบ: C ถูกออกแบบมาเพื่อให้ ควบคุม Hardware และ Memory ได้โดยตรง จึงเปิดให้ Programmer จัดการ Pointer และ Memory เอง ส่งผลให้มีประสิทธิภาพและยืดหยุ่นสูง แต่ความปลอดภัยของ Memory ขึ้นอยู่กับการเขียนโปรแกรมที่ถูกต้อง แตกต่างจาก Rust ที่ให้ Compiler ช่วยตรวจสอบความปลอดภัยก่อนโปรแกรมทำงาน
 
 ---
 
