@@ -271,134 +271,210 @@ fn main() {
 
 ### 9.1 Syntax
 
-รูปแบบไวยากรณ์ของ Slices ใน Rust ใช้เครื่องหมาย `&` ร่วมกับช่วงข้อมูล `[..]` เพื่อสร้าง reference ที่อ้างถึงข้อมูลบางส่วนของ collection โดยไม่ต้องคัดลอกข้อมูลทั้งหมด
+Rust ใช้ slice เพื่ออ้างอิงข้อมูลบางส่วนของ collection โดยไม่ต้องสร้าง collection ใหม่ขึ้นมา
 
-**ตัวอย่าง**
+รูปแบบที่พบบ่อยคือ
 
 ```rust
-fn main() {
-    let numbers = [10, 20, 30, 40, 50];
-    let slice = &numbers[1..4];
-
-    println!("{:?}", slice); // [20, 30, 40]
-}
+&collection[start..end]
 ```
-รูปแบบไวยากรณ์ที่สำคัญ
-- `&collection[start..end]` — อ้างอิงสมาชิกตั้งแต่ `start` ถึงก่อน `end`
-- `&collection[..end]` — เริ่มตั้งแต่ต้นจนถึงก่อน `end`
-- `&collection[start..]` — เริ่มจาก `start` จนถึงท้ายข้อมูล
-- `&collection[..]` — อ้างอิงข้อมูลทั้งหมดในรูปแบบ slice
+หรือถ้าเริ่มจากตำแหน่งแรก
+```rust
+&collection[..end]
+```
+
+**ตัวอย่าง**
+```rust
+let numbers = [10, 20, 30, 40, 50];
+
+let part = &numbers[1..4];
+
+println!("{:?}", part);
+```
+ผลที่ได้คือ
+```rust
+[20, 30, 40]
+```
+สำหรับ String สามารถใช้
+```rust
+let text = String::from("Hello Rust");
+
+let word = &text[0..5];
+```
+โดย word จะมีชนิดเป็น &str ซึ่งเป็น string slice
+
+สำหรับ Vec
+```rust
+let numbers = vec![10, 20, 30, 40, 50];
+
+let part = &numbers[1..4];
+```
+part จะเป็น slice ที่อ้างอิงข้อมูลบางส่วนของ Vec โดยไม่ได้สร้าง Vec ใหม่
+
+ดังนั้น Syntax ของ Slice จะเน้นการใช้ & ร่วมกับช่วง [start..end] เพื่อสร้าง reference ไปยังข้อมูลเดิม
 
 ### 9.2 Semantics
 
-Semantics คือส่วนที่อธิบายว่าเมื่อเขียนคำสั่งแล้ว โปรแกรมจะทำงานอย่างไร ซึ่งสำหรับ Slice สิ่งสำคัญคือ Slice จะอ้างถึงข้อมูลเดิม ไม่ได้หมายความว่า Rust จะสร้าง Collection ใหม่
+Slice มีความหมายว่าเป็น ส่วนหนึ่งของข้อมูลเดิม ไม่ใช่ข้อมูลชุดใหม่
 
 **ตัวอย่าง**
 
 ```rust
-fn main() {
-    let text = String::from("Rust Language");
-    let part = &text[0..4];
-
-    println!("{}", part); // Rust
-}
+let data = [10, 20, 30, 40, 50];
+let part = &data[1..4];
 ```
-ตัวแปร `part` จะอ้างถึงบางส่วนของ `text` ดังนั้นข้อมูลจริงยังอยู่ใน `text` และ `part` ไม่ได้เป็นเจ้าของข้อมูลนั้น
-และ การใช้ Range จะมีขอบเขตที่ชัดเจน เช่น `1..4` ไม่รวมตำแหน่งที่ 4 และถ้ากำหนดช่วงไม่ถูกต้อง โปรแกรมอาจเกิด Panic ตอน Runtime
+part หมายถึงข้อมูล `20, 30, 40` แต่ข้อมูลยังอยู่ใน data เหมือนเดิม
+
+แนวคิดสำคัญคือ Slice เป็น borrowed reference จึงไม่ได้เป็นเจ้าของข้อมูล
+```rust
+let numbers = vec![10, 20, 30, 40];
+
+let part = &numbers[1..3];
+```
+ในกรณีนี้ part ยืมข้อมูลจาก numbers มาใช้ชั่วคราว ดังนั้นไม่สามารถใช้ part หลังจากเจ้าของข้อมูลหมดอายุได้
+
+อีกประเด็นหนึ่งคือการใช้ String slice ต้องระวังเรื่อง UTF-8 เพราะ &str ไม่ได้แบ่งข้อมูลตามตัวอักษรโดยตรง แต่ใช้ byte range
+```rust
+let text = String::from("Hello");
+let part = &text[0..2];
+```
+กรณีนี้จะได้ "He" เพราะตัวอักษร ASCII ใช้ 1 byte ต่อตัว
+
+แต่ String ที่มีภาษาไทยหรือตัวอักษร Unicode การตัด byte ผิดตำแหน่งอาจทำให้เกิด panic ได้ เพราะไม่ใช่ทุก byte position ที่เป็นขอบเขตของตัวอักษร
+
+ดังนั้น Semantics ของ Slice คือ การอ้างอิงข้อมูลเดิมบางช่วงผ่าน borrowing โดยไม่โอน ownership
 
 ### 9.3 Type System
 
-Slice เกี่ยวข้องกับระบบชนิดข้อมูลของ Rust โดยชนิดข้อมูลระบุว่าข้อมูลที่ถูกอ้างอิงมีรูปแบบ ดังนี้
+Rust มี Type System ที่ทำงานร่วมกับ Slice และ Ownership อย่างชัดเจน
 
-- `&[i32]` คือ immutable slice ที่อ้างถึงสมาชิกชนิด `i32`
-- `&mut [i32]` คือ mutable slice ที่อนุญาตให้แก้ไขสมาชิกผ่าน reference ที่ยืมมาได้
-- `&str` คือ string slice สำหรับอ้างอิงข้อความ UTF-8 ที่ถูกต้อง
-- `&[T]` เป็น slice ที่ใช้กับสมาชิกชนิด `T` ได้หลายชนิด
-
-**ตัวอย่าง**
+**ตัวอย่างชนิดที่เกี่ยวข้อง**
 
 ```rust
-fn main() {
-    let mut data = [1, 2, 3, 4];
+let arr: [i32; 5] = [1, 2, 3, 4, 5];
 
-    let part: &[i32] = &data[1..3];
-    println!("{:?}", part); // [2, 3]
+let slice: &[i32] = &arr[1..4];
 
-    let part_mut: &mut [i32] = &mut data[1..3];
-    part_mut[0] = 20;
+let text: &str = "Hello Rust";
 
-    println!("{:?}", data); // [1, 20, 3, 4]
-}
+let vec: Vec<i32> = vec![1, 2, 3, 4, 5];
+
+let vec_slice: &[i32] = &vec[1..4];
 ```
-ตรงนี้ `&[i32]` หมายถึง Reference ไปยัง Slice ที่เก็บข้อมูลชนิด `i32`
-ส่วน `&mut [i32]` ใช้เมื่อต้องการแก้ไขข้อมูลก็สามารถใช้ Mutable Slice ได้
+ความแตกต่างที่สำคัญคือ `[i32; 5]` เป็น Array ที่มีขนาดแน่นอน `&[i32]` เป็น Slice Reference ซึ่งขนาดของข้อมูลที่อ้างอิงสามารถเปลี่ยนได้ตามช่วงที่เลือก `&str` เป็น String Slice ใช้สำหรับอ้างอิงข้อมูล String ที่เป็น UTF-8 และ `Vec<i32>` เป็น Collection ที่สามารถเพิ่มหรือลดจำนวนสมาชิกได้ และเป็นเจ้าของข้อมูลของตัวเอง
 
-ดังนั้น Type System ของ Rust ไม่ได้บอกแค่ว่าเป็นข้อมูลชนิดอะไร แต่ยังเกี่ยวข้องกับวิธีที่ข้อมูลนั้นถูก Borrow และนำไปใช้ด้วย ซึ่งเป็นแนวคิดเดียวกับเรื่อง &T และ &mut T ใน References & Borrowing
+ดังนั้น Rust จึงใช้ Type System เพื่อแยกให้ชัดว่าอะไรเป็นเจ้าของข้อมูล และอะไรเป็นเพียง reference ที่ยืมข้อมูลมาใช้
 
 ### 9.4 Memory / Resource Management
 
-หัวข้อนี้เป็นส่วนที่ Slice เชื่อมกับ Memory Model ของ Rust โดยตรง
-
-ข้อมูลของ Array ที่มีขนาดคงที่สามารถอยู่บน Stack ได้ ส่วนข้อมูลของ Vec และข้อมูลที่ String ต้องจองพื้นที่เพิ่ม มักเกี่ยวข้องกับ Heap
+Rust มีการจัดการ Memory โดยใช้แนวคิด Ownership, Borrowing และ Lifetime แทนการใช้ Garbage Collector แบบภาษาอย่าง Java
 
 **ตัวอย่าง**
 
 ```rust
-fn main() {
-    let numbers = vec![10, 20, 30, 40, 50];
-    let slice = &numbers[1..3];
-
-    println!("{:?}", part); // [20, 30]
-}
+let numbers = vec![10, 20, 30, 40, 50];
+let part = &numbers[1..4];
 ```
-ในกรณีนี้ `numbers` เป็นเจ้าของข้อมูลใน Vector ส่วน `slice` เป็น Reference ที่อ้างถึงข้อมูลบางส่วนของ `numbers`
+ในตัวอย่างนี้ numbers เป็นเจ้าของ Vec และข้อมูลของ Vec โดยทั่วไปจะเก็บอยู่บน Heap
+ส่วนตัวแปร part เป็น slice reference ที่ใช้ชี้ไปยังข้อมูลบางส่วนของ numbers
 
-ดังนั้น `slice` ไม่ได้เป็นเจ้าของข้อมูลเอง
+สำหรับ Array ที่มีขนาดคงที่ เช่น 
+```rust
+let numbers = [1, 2, 3, 4, 5];
+```
+ข้อมูลมักจะถูกเก็บบน Stack เมื่อ local variable ถูกสร้างขึ้นแบบปกติ
 
-แนวคิดนี้สัมพันธ์กับ Ownership และ Borrowing เพราะข้อมูลจะยังใช้งานได้ตราบเท่าที่ Owner ยังมีอยู่ และ Reference ต้องไม่ถูกนำไปใช้หลังจากข้อมูลต้นทางหมดอายุ  
+แต่ `Vec` จะเก็บตัวข้อมูลไว้บน Heap และตัวแปร `Vec` บน Stack จะเก็บข้อมูลสำหรับจัดการ buffer เช่น pointer, length และ capacity
+เมื่อออกจาก Scope Rust จะเรียก `drop` และคืนทรัพยากรที่เจ้าของข้อมูลรับผิดชอบโดยอัตโนมัติ
 
-อีกจุดหนึ่งที่ต่างจากบางภาษา คือ Rust ไม่ต้องใช้ Garbage Collector เพื่อคอยค้นหาว่า Object ไหนไม่ใช้แล้ว แต่ใช้ Ownership และ Scope เป็นส่วนสำคัญในการจัดการ Resource
+จุดสำคัญคือ Slice ไม่ได้เป็นเจ้าของข้อมูล
+```rust
+let data = vec![1, 2, 3, 4];
+let part = &data[1..3];
+```
+เมื่อ data หมด Scope ข้อมูลที่ part อ้างอิงอยู่ก็ไม่สามารถถูกใช้งานต่อได้ เพราะ Rust ใช้ Borrow Checker ป้องกันไม่ให้เกิดการอ้างอิงข้อมูลที่หมดอายุแล้ว
 
 ### 9.5 Abstraction / Other PPL Concepts
 
-Slice ถือเป็น Abstraction ที่ช่วยให้เราใช้งานข้อมูลแค่บางส่วนได้ โดยไม่ต้องจัดการรายละเอียดของ Memory Address เองทั้งหมด
+แนวคิด Slice ของ Rust เชื่อมโยงกับ PPL หลายเรื่อง ได้แก่ Abstraction, Scope, Binding และ Lifetime
 
-**ตัวอย่าง**
+**Abstraction**
+
+Slice ช่วยให้โปรแกรมเมอร์สนใจเฉพาะ “ข้อมูลช่วงที่ต้องการ” โดยไม่ต้องจัดการรายละเอียดการสร้าง collection ใหม่
 
 ```rust
 fn print_data(data: &[i32]) {
+
     println!("{:?}", data);
 
 }
 ```
-แล้วส่ง Slice เข้าไปได้
+ฟังก์ชันนี้สามารถรับได้ทั้ง
 ```rust
-fn main() {
-    let numbers = [10, 20, 30, 40];
+let arr = [1, 2, 3, 4];
+let vec = vec![5, 6, 7, 8];
+```
+เพราะทั้ง Array และ Vector สามารถถูกยืมมาเป็น `&[i32]` ได้
 
-    print_data(&numbers[1..3]); // [20, 30]
+จึงเป็นการสร้าง Abstraction ให้ฟังก์ชันทำงานกับ “ลำดับของข้อมูล” โดยไม่ต้องสนใจว่าเจ้าของข้อมูลจริง ๆ เป็น Array หรือ Vector
+
+**Scope**
+
+ตัวแปรและ reference จะใช้งานได้ภายใน Scope ที่กำหนด
+
+```rust
+let data = vec![1, 2, 3];
+
+{
+    let part = &data[0..2];
 }
 ```
-ข้อดีคือ Function ไม่จำเป็นต้องรู้ว่าข้อมูลที่ส่งมาอยู่ใน Array ทั้งก้อนหรือเป็นเพียงบางช่วง
-นอกจากนี้ยังเกี่ยวข้องกับแนวคิด PPL อื่น ๆ เช่น
-- Scope: กำหนดขอบเขตที่ตัวแปรและ reference สามารถใช้งานได้
-- Binding: การผูกชื่อของตัวแปรกับค่าหรือข้อมูลที่ตัวแปรนั้นอ้างถึง
-- Ownership: ใช้บอกว่าใครเป็นเจ้าของข้อมูล
-- Borrowing: ใช้สำหรับนำข้อมูลไปใช้งานผ่าน Reference โดยไม่ต้องย้าย Ownership
-- Lifetime: เกี่ยวข้องกับระยะเวลาที่ Reference สามารถใช้งานได้
-- Paradigm: สนับสนุนแนวคิด procedural และ generic programming พร้อมใช้ระบบ ownership และ borrowing เพื่อควบคุมการเข้าถึงข้อมูล
+`part` จะมี Scope อยู่ภายใน block เท่านั้น
+
+**Binding**
+
+Rust ใช้ `let` สำหรับ Binding ตัวแปรกับค่า
+
+```rust
+let data = vec![1, 2, 3, 4];
+let part = &data[1..3];
+```
+ในที่นี้ `part` ถูก Binding ให้เป็น reference ไปยังส่วนหนึ่งของ `data`
+
+**Lifetime**
+
+Slice ต้องไม่สามารถมีอายุยาวกว่า Owner ของข้อมูล
+
+```rust
+let data = vec![1, 2, 3];
+
+let part = &data[0..2];
+```
+Lifetime ของ `part` จึงขึ้นอยู่กับ `data`
+
+แนวคิดนี้ช่วยให้ Rust ตรวจสอบปัญหาเกี่ยวกับ Memory ตั้งแต่ Compile Time
 
 ### 9.6 Why Rust?
 
-Rust ออกแบบระบบ Slice และ Memory Model เพื่อให้โปรแกรมจัดการข้อมูลได้อย่างปลอดภัยและมีประสิทธิภาพ ดังนี้
+Rust ออกแบบมาให้สามารถควบคุม Memory ได้ดี แต่ในขณะเดียวกันก็พยายามป้องกันปัญหาที่เกิดจากการจัดการ Memory
 
-- Memory Safety: กฎ ownership และ lifetime ช่วยป้องกัน dangling references และการใช้ข้อมูลหลังหมดอายุ
-- Reliability: Borrow Checker ตรวจสอบข้อจำกัดในการยืมข้อมูล เพื่อป้องกันการเข้าถึงที่ขัดแย้งกันตามกฎของ Rust
-- Performance: Slice ช่วยให้เข้าถึงข้อมูลบางส่วนได้โดยไม่ต้องคัดลอก collection ทั้งหมด
-- Concurrency Safety: กฎการยืมช่วยป้องกัน data race ในกรณีที่การเข้าถึงข้อมูลไม่เป็นไปตามเงื่อนไขความปลอดภัยของ Rust
-- No Garbage Collector: Rust ใช้ ownership และกลไกการทำลายค่าตาม scope เพื่อจัดการทรัพยากร โดยทั่วไปไม่ต้องอาศัย garbage collector
+สำหรับ Slice จุดเด่นคือสามารถ เข้าถึงข้อมูลบางส่วนโดยไม่ต้อง Copy ข้อมูลใหม่
 
-สรุป: Slices เป็นแนวคิดที่เชื่อมโยง Syntax, Semantics, Type System และ Memory Management เข้าด้วยกัน โดยอาศัย ownership และ borrowing เพื่อให้เข้าถึงข้อมูลได้อย่างมีประสิทธิภาพและปลอดภัย
+ตัวอย่าง
+```rust
+let data = vec![10, 20, 30, 40, 50];
+
+let part = &data[1..4];
+```
+part เพียงแค่อ้างอิงข้อมูลเดิม ทำให้ลดการสร้างข้อมูลซ้ำและช่วยเรื่อง Performance
+
+ในขณะเดียวกัน Rust ใช้ Ownership และ Borrow Checker ช่วยป้องกันปัญหา เช่น
+- dangling reference คือ Reference ที่ยังชี้ไปยังข้อมูลเดิม แต่ข้อมูลนั้นถูกทำลายหรือหมดอายุไปแล้ว
+- use-after-free คือการ นำ Memory ที่ถูกคืนหรือถูกปล่อยไปแล้วกลับมาใช้งานอีก
+- double free คือการ คืนหรือปล่อย Memory เดิมมากกว่าหนึ่งครั้ง
+- invalid memory access คือการ เข้าถึง Memory ในตำแหน่งที่ไม่ควรเข้าถึง
+
+ดังนั้น Slice จึงเป็นตัวอย่างที่เห็นได้ชัดว่า Rust พยายามรวม Safety + Performance เข้าด้วยกัน
 
 ---
 
