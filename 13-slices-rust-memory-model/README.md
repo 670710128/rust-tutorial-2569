@@ -468,109 +468,100 @@ let part = &data[1..4];
 ```
 part เพียงแค่อ้างอิงข้อมูลเดิม ทำให้ลดการสร้างข้อมูลซ้ำและช่วยเรื่อง Performance
 
-ในขณะเดียวกัน Rust ใช้ Ownership และ Borrow Checker ช่วยป้องกันปัญหา เช่น
-- dangling reference คือ Reference ที่ยังชี้ไปยังข้อมูลเดิม แต่ข้อมูลนั้นถูกทำลายหรือหมดอายุไปแล้ว
-- use-after-free คือการ นำ Memory ที่ถูกคืนหรือถูกปล่อยไปแล้วกลับมาใช้งานอีก
-- double free คือการ คืนหรือปล่อย Memory เดิมมากกว่าหนึ่งครั้ง
-- invalid memory access คือการ เข้าถึง Memory ในตำแหน่งที่ไม่ควรเข้าถึง
+ดังนั้น Rust ให้ความสำคัญกับ Memory Safety โดยใช้ Ownership, Borrowing และ Lifetime ในการจัดการหน่วยความจำ แนวคิดเหล่านี้ช่วยป้องกันปัญหาที่พบบ่อยในภาษาแบบ Manual Memory Management เช่น dangling reference คือ reference ที่ชี้ไปยังข้อมูลที่หมดอายุแล้ว, use-after-free คือการใช้ข้อมูลหลังจาก Memory ถูกคืนไปแล้ว, double free คือการคืน Memory เดิมมากกว่าหนึ่งครั้ง และ invalid memory access คือการเข้าถึง Memory ในตำแหน่งที่ไม่ถูกต้อง เช่น การเข้าถึง Array เกินขอบเขต
 
-ดังนั้น Slice จึงเป็นตัวอย่างที่เห็นได้ชัดว่า Rust พยายามรวม Safety + Performance เข้าด้วยกัน
+ในกรณีของ Slice จะเห็นว่า Slice ไม่ได้เป็นเจ้าของข้อมูล แต่เป็นการ Borrow ข้อมูลจาก Owner ดังนั้น Rust จึงตรวจสอบความสัมพันธ์ระหว่าง Slice กับข้อมูลต้นทางก่อน Compile เพื่อป้องกันการอ้างอิงข้อมูลที่ไม่มีอยู่แล้ว และช่วยให้โปรแกรมมีทั้ง Memory Safety และ Performance
 
 ---
 
 ## 10. Rust vs. Other Language
 
-**Comparison Language:** `Java`
+**Comparison Language:** Python / C / C++ / Java
 
-| Aspect | Rust | Java |
-|---|---|---|
-| Syntax | ใช้ `&[start..end]` เพื่อสร้าง slice และ `&str` สำหรับ string slice | `[อธิบาย]` |
-| Semantics / Behavior | Slice เป็น borrowed view ของข้อมูลเดิม ไม่ได้เป็นเจ้าของข้อมูล | `[อธิบาย]` |
-| Type System | Static + strong typing และมี `&[T]`, `&mut [T]`, `&str` พร้อม borrow checking | `[อธิบาย]` |
-| Memory Management | จัดการด้วย Ownership, Borrowing, Lifetime ไม่มี Garbage Collector | `[อธิบาย]` |
-| Safety | เน้น memory safety และ compiler ตรวจสอบ borrowing ก่อน compile | `[อธิบาย]` |
+| Aspect | Rust | Python | C | C++ | Java |
+|---|---|---|---|---|---|
+| Syntax | ใช้ &[T] สำหรับ slice และ &str สำหรับ string slice เช่น &data[1..4] | ใช้ slicing เช่น data[1:4] และ text[1:4] | ไม่มี slice type โดยตรง มักใช้ pointer ร่วมกับ length เช่น int *p = &data[1] | มี std::span และ std::string_view สำหรับมองข้อมูลบางช่วงโดยไม่เป็นเจ้าของ | Array ไม่มี slice โดยตรง มักใช้ Arrays.copyOfRange() ซึ่งสร้าง array ใหม่ หรือ List.subList() สำหรับ view |
+| Semantics / Behavior | Slice เป็น borrowed reference ไปยังข้อมูลเดิม ไม่ได้สร้างข้อมูลใหม่ และไม่เป็นเจ้าของข้อมูล | Slice ของ list, str โดยทั่วไปได้ข้อมูลใหม่ ส่วนตัวแปรเดิมยังเป็นเจ้าของข้อมูลของตัวเอง | Pointer เพียงชี้ไปยังตำแหน่ง Memory โปรแกรมเมอร์ต้องจัดการว่า pointer และ length ถูกต้อง | span / string_view เป็น non-owning view จึงไม่เป็นเจ้าของข้อมูล ต้องระวัง lifetime ของข้อมูลต้นทาง | การ slice array แบบ copyOfRange() เป็นการ Copy ข้อมูล ส่วน subList() เป็น view ที่อ้างอิง List เดิม |
+| Type System | Static + Strong typing มีชนิดชัดเจน เช่น &[i32], &str, Vec<i32> | Dynamic typing ชนิดของตัวแปรถูกตรวจสอบตอน Runtime | Static typing แต่มี pointer และ implicit conversion หลายกรณี | Static + Strong typing มี pointer, reference, span, string_view | Static + Strong typing ไม่มี pointer arithmetic แบบ C/C++ |
+| Memory Management | ใช้ Ownership, Borrowing และ Lifetime โดยไม่มี Garbage Collector | จัดการ Memory อัตโนมัติตาม implementation เช่น reference counting/garbage collection | Manual memory management เช่น malloc() / free() | ใช้ RAII, destructor และ smart pointers ช่วยจัดการ Memory แต่ยังสามารถใช้ raw pointer ได้ | ใช้ Garbage Collector เป็นหลัก Object และ Array อยู่บน Heap ส่วน local references/stack frames อยู่ใน Stack |
+| Safety | เน้น Memory Safety ตั้งแต่ Compile Time เช่น ป้องกัน dangling reference และ use-after-free | มีการจัดการ Memory อัตโนมัติและตรวจสอบหลายอย่างตอน Runtime | Safety ต่ำกว่า เพราะสามารถเกิด dangling pointer, buffer overflow, use-after-free ได้ | ปลอดภัยกว่า C ในหลายด้านเมื่อใช้ RAII/modern C++ แต่ raw pointer และ lifetime ยังทำให้เกิดปัญหาได้ | มี bounds checking, ไม่มี pointer arithmetic และใช้ GC จึงลดปัญหา Memory บางประเภท |
 
 ### Rust Example
-ตัวอย่าง Slice ของ Array
+
+Slice ของ Vector
 ```rust
 fn main() {
-    let numbers = [10, 20, 30, 40, 50];
+    let numbers = vec![10, 20, 30, 40, 50];
 
-    let slice = &numbers[1..4];
+    let part = &numbers[1..4];
 
-    println!("{:?}", slice);
+    println!("{:?}", part);
 }
 ```
 ผลลัพธ์
 ```rust
 [20, 30, 40]
 ```
-จุดสำคัญคือ `&numbers[1..4]` ไม่ได้สร้าง Array ใหม่ แต่เป็น reference ที่มองข้อมูลบางส่วนของ Array เดิม
+ตรงนี้ part ไม่ได้สร้าง Vec ใหม่ แต่เป็น Slice ที่ ยืมข้อมูลจาก numbers
 
-### Analysis
+ดังนั้น numbers เป็น Owner ส่วน part เป็น Borrower
 
-ความแตกต่างสำคัญ: Rust ใช้แนวคิด Ownership, Borrowing และ References ในการจัดการหน่วยความจำ โดย Slice เช่น `&[T]` และ `&str` เป็นการอ้างอิงข้อมูลเดิมโดยไม่ต้องเป็นเจ้าของข้อมูล และ Compiler จะตรวจสอบกฎของการ Borrow เพื่อป้องกันปัญหาด้าน Memory เช่น Dangling Reference และการเข้าถึงข้อมูลที่ขัดแย้งกัน
+### Rust &str Example
+```rust
+fn main() {
+    let text = "Hello Rust";
 
-เหตุผลด้านการออกแบบ: Rust ออกแบบระบบ Ownership และ Borrowing เพื่อให้ได้ทั้ง Memory Safety และ Performance โดยไม่จำเป็นต้องใช้ Garbage Collector ทำให้สามารถควบคุมทรัพยากรได้ในระดับ Compile Time และยังสามารถใช้ Slice เพื่อเข้าถึงข้อมูลบางส่วนโดยไม่ต้อง Copy ข้อมูลทั้งหมด
+    let part: &str = &text[0..5];
+
+    println!("{}", part);
+}
+```
+ผลลัพธ์
+```rust
+Hello
+```
+&str เป็น String Slice ที่ ไม่ได้เป็นเจ้าของ String แต่เป็น reference ไปยังข้อมูล String ที่มีอยู่แล้ว
+
+จุดที่ต้องระวังคือ Rust String ใช้ UTF-8 ดังนั้น &str ใช้ byte range ไม่ใช่ตำแหน่งตัวอักษรแบบที่มองเห็น
 
 ### Python Example
 
+Python มี slicing โดยตรงและเขียนง่ายมาก
 ```python
 numbers = [10, 20, 30, 40, 50]
 
-slice = numbers[1:4]
+part = numbers[1:4]
 
-print(slice)
+print(part)
 ```
 ผลลัพธ์
 ```python
 [20, 30, 40]
 ```
-Python มี syntax สำหรับ slicing ที่ง่ายมาก คือ `numbers[start:end]` แต่การ slice `list` จะสร้าง list ใหม่ แทนที่จะเป็น borrowed slice แบบ Rust
+แต่พฤติกรรมต่างจาก Rust เพราะการ slice list แบบนี้โดยทั่วไปจะสร้าง list ใหม่
 
-### Analysis
-
-ความแตกต่างสำคัญ: Python มี Syntax สำหรับ Slice ที่ใช้งานง่าย เช่น `list[start:end]` และ `string[start:end]` แต่การ Slice ของ `list` โดยทั่วไปจะสร้าง List ใหม่ขึ้นมา ขณะที่ Rust Slice เป็น Reference ที่มองข้อมูลเดิม นอกจากนี้ Python จัดการหน่วยความจำโดยอาศัย Runtime มากกว่าให้ Programmer ควบคุมโดยตรง
-
-เหตุผลด้านการออกแบบ: Python เน้น ความง่ายในการเขียนโปรแกรมและ Abstraction ระดับสูง จึงออกแบบให้การจัดการ Memory เป็นหน้าที่ของ Runtime และมี Syntax ของ Slice ที่กระชับ ทำให้ Programmer สามารถจัดการข้อมูลเป็นช่วงได้ง่ายโดยไม่ต้องจัดการ Pointer และ Memory Address โดยตรง
-
-### Java Example
-
-```java
-public class Main {
-    public static void main(String[] args) {
-        int[] numbers = {10, 20, 30, 40, 50};
-
-        int[] slice = java.util.Arrays.copyOfRange(numbers, 1, 4);
-
-        System.out.println(java.util.Arrays.toString(slice));
-    }
-}
+จึงสามารถมองได้ประมาณว่า
 ```
-ผลลัพธ์
-```java
-[20, 30, 40]
+numbers → [10,20,30,40,50]
+
+part    → [20,30,40] (object ใหม่)
 ```
-Java มี `Arrays.copyOfRange()` สำหรับเลือกข้อมูลเป็นช่วง แต่จะทำการ copy ข้อมูลออกมาเป็น array ใหม่ 
-ดังนั้นจึงแตกต่างจาก Rust ที่ slice สามารถเป็น view ของข้อมูลเดิมได้
+Python จึงใช้งานง่ายกว่า แต่ไม่มีแนวคิด Ownership/Borrowing แบบ Rust ที่ Compiler ตรวจสอบความสัมพันธ์เหล่านี้
 
-### Analysis
-
-ความแตกต่างสำคัญ: Java ใช้ Reference สำหรับการอ้างถึง Object และ Array และมี Garbage Collector ช่วยจัดการ Memory ส่วน Rust ใช้ Ownership และ Borrowing เพื่อตรวจสอบการเป็นเจ้าของข้อมูลตั้งแต่ Compile Time สำหรับการเลือกช่วงข้อมูลของ Array ใน Java มักใช้การ Copy ข้อมูลผ่าน API เช่น `Arrays.copyOfRange()` ซึ่งแตกต่างจาก Rust Slice ที่สามารถอ้างถึงข้อมูลเดิมได้
-
-เหตุผลด้านการออกแบบ: Java ถูกออกแบบให้เน้น Portability, Abstraction และ Automatic Memory Management จึงใช้ Garbage Collector เพื่อลดภาระในการจัดการ Memory ของ Programmer ขณะที่ Rust เลือกใช้ Ownership เพื่อให้สามารถควบคุม Memory ได้โดยไม่ต้องพึ่ง Garbage Collector
 ### C Example
 
+C ไม่มี Slice เป็น Type โดยตรง ดังนั้นมักใช้ Pointer + Length
 ```c
 #include <stdio.h>
 
 int main() {
     int numbers[] = {10, 20, 30, 40, 50};
 
-    int *slice = &numbers[1];
+    int *part = &numbers[1];
+    int length = 3;
 
-    for (int i = 0; i < 3; i++) {
-        printf("%d ", slice[i]);
+    for (int i = 0; i < length; i++) {
+        printf("%d ", part[i]);
     }
 
     return 0;
@@ -580,13 +571,119 @@ int main() {
 ```c
 20 30 40
 ```
-ใน C เราสามารถใช้ pointer เพื่อชี้ไปยังตำแหน่งหนึ่งของ array ได้โดยตรง แต่ C ไม่ได้ตรวจสอบเรื่อง ownership หรือ lifetime ให้อัตโนมัติแบบ Rust
+ตรงนี้
+```c
+int *part = &numbers[1];
+int length = 3;
+```
+ต้องใช้ Pointer บอกว่าเริ่มตรงไหน และต้องใช้ length บอกว่ามีข้อมูลกี่ตัว
+
+C ไม่ได้ตรวจสอบให้ว่า Pointer ยังถูกต้องหรือข้อมูลยังมีชีวิตอยู่
+
+จึงมีโอกาสเกิดปัญหา เช่น 
+
+- Dangling Pointer คือ Reference ที่ยังชี้ไปยังข้อมูลเดิม แต่ข้อมูลนั้นถูกทำลายหรือหมดอายุไปแล้ว
+- Use-After-Free คือการ นำ Memory ที่ถูกคืนหรือถูกปล่อยไปแล้วกลับมาใช้งานอีก
+- Invalid Memory Access คือการ เข้าถึง Memory ในตำแหน่งที่ไม่ควรเข้าถึง
+
+
+### C++ Example
+
+C++ มี std::span ซึ่งมีแนวคิดใกล้กับ Rust Slice มาก
+```c+
+#include <iostream>
+#include <vector>
+#include <span>
+
+int main() {
+    std::vector<int> numbers = {10, 20, 30, 40, 50};
+
+    std::span<int> part(numbers.data() + 1, 3);
+
+    for (int x : part) {
+        std::cout << x << " ";
+    }
+
+    return 0;
+}
+```
+ผลลัพธ์
+```c+
+20 30 40
+```
+std::span เป็น non-owning view หมายความว่าไม่ได้เป็นเจ้าของข้อมูล เช่นเดียวกับ Slice ของ Rust ในแง่แนวคิด
+
+แต่ความแตกต่างสำคัญคือ C++ ไม่ได้มี Ownership/Borrow Checker แบบ Rust ดังนั้นโปรแกรมเมอร์ยังต้องระวังว่า numbers ต้องมีอายุยาวพอที่จะให้ part ใช้งาน
+
+C++ ยังมี std::string_view สำหรับมองบางส่วนของ String โดยไม่ Copy ข้อมูล
+
+### Java Example
+
+Java ไม่มี Slice Type สำหรับ Array โดยตรง
+
+ตัวอย่าง
+```java
+import java.util.Arrays;
+
+public class Main {
+    public static void main(String[] args) {
+        int[] numbers = {10, 20, 30, 40, 50};
+
+        int[] part = Arrays.copyOfRange(numbers, 1, 4);
+
+        System.out.println(Arrays.toString(part));
+    }
+}
+```
+ผลลัพธ์
+```java
+[20, 30, 40]
+```
+แต่ Arrays.copyOfRange() สร้าง Array ใหม่
+```
+numbers → [10,20,30,40,50]
+
+part    → [20,30,40] (Array ใหม่)
+```
+จึงต่างจาก Rust
+```rust
+let part = &numbers[1..4];
+```
+ที่ part เป็น reference ไปยังข้อมูลเดิม
+
+สำหรับ Collection อย่าง List Java สามารถใช้
+```java
+List<Integer> part = numbers.subList(1, 4);
+```
+ซึ่งมีลักษณะเป็น view ของ List เดิม มากกว่าการ Copy ทั้งชุด
 
 ### Analysis
 
-ความแตกต่างสำคัญ: C สามารถเข้าถึงข้อมูลใน Array ผ่าน Pointer และ Address ได้โดยตรง ทำให้สามารถสร้างแนวคิดที่คล้าย Slice ได้ เช่น การใช้ Pointer ชี้ไปยังตำแหน่งเริ่มต้นของข้อมูล แต่ C ไม่มีระบบ Ownership และ Borrow Checking แบบ Rust ดังนั้น Programmer ต้องรับผิดชอบเรื่องขอบเขตและอายุของข้อมูลเอง
+ความแตกต่างที่สำคัญระหว่าง Rust กับภาษาอื่นอยู่ที่ แนวคิดในการจัดการ Memory และการออกแบบ Slice โดย Rust พยายามให้โปรแกรมสามารถเข้าถึงข้อมูลเดิมได้โดยไม่ต้อง Copy ข้อมูล แต่ยังคงตรวจสอบความปลอดภัยของการอ้างอิงตั้งแต่ Compile Time
 
-เหตุผลด้านการออกแบบ: C ถูกออกแบบมาเพื่อให้ ควบคุม Hardware และ Memory ได้โดยตรง จึงเปิดให้ Programmer จัดการ Pointer และ Memory เอง ส่งผลให้มีประสิทธิภาพและยืดหยุ่นสูง แต่ความปลอดภัยของ Memory ขึ้นอยู่กับการเขียนโปรแกรมที่ถูกต้อง แตกต่างจาก Rust ที่ให้ Compiler ช่วยตรวจสอบความปลอดภัยก่อนโปรแกรมทำงาน
+Rust vs. Python
+
+Python ใช้ Syntax ของ Slice ที่ง่าย เช่น data[1:4] และจัดการ Memory ให้อัตโนมัติ ทำให้เขียนโปรแกรมได้สะดวก แต่ไม่ได้บังคับให้โปรแกรมเมอร์ระบุ Ownership หรือความสัมพันธ์ของ Reference แบบ Rust การออกแบบของ Rust จึงเน้นให้ผู้เขียนโปรแกรมควบคุมการยืมข้อมูลได้ชัดเจนขึ้น เพื่อให้เกิด Memory Safety โดยไม่ต้องพึ่ง Garbage Collector
+
+Rust vs. C
+
+C ไม่มี Slice type โดยตรง และมักใช้ Pointer กับ Length แทน ทำให้ควบคุม Memory ได้ละเอียดและมี Overhead ต่ำ แต่โปรแกรมเมอร์ต้องรับผิดชอบเรื่อง Pointer, Lifetime และขอบเขตของข้อมูลเอง Rust ออกแบบมาเพื่อลดปัญหาเหล่านี้ โดยให้ Slice เช่น &[T] เป็น Borrowed Reference และใช้ Ownership กับ Borrow Checker ตรวจสอบว่าการอ้างอิงยังถูกต้องอยู่
+
+Rust vs. C++
+
+C++ มีแนวคิดที่ใกล้ Rust มากขึ้น เช่น std::span และ std::string_view ซึ่งใช้เป็นมุมมองไปยังข้อมูลเดิมโดยไม่ต้อง Copy แต่ C++ ยังเปิดให้ใช้ Pointer และจัดการ Lifetime ได้หลายรูปแบบ ขณะที่ Rust ออกแบบกฎ Ownership และ Lifetime ให้เป็นส่วนหนึ่งของ Type System และให้ Compiler ตรวจสอบความสัมพันธ์ของ Reference อย่างเข้มงวดกว่า
+
+Rust vs. Java
+
+Java เน้นการจัดการ Memory อัตโนมัติด้วย Garbage Collector และไม่มี Pointer Arithmetic แบบ C/C++ ทำให้การใช้งาน Memory ค่อนข้างง่าย แต่การออกแบบของ Rust เลือกใช้ Ownership และ Lifetime แทน Garbage Collector เพื่อให้สามารถควบคุมทรัพยากรได้ละเอียดและคาดเดาได้มากขึ้น โดยยังรักษา Memory Safety ไว้
+
+เหตุผลด้านการออกแบบภาษา
+
+แนวคิดของ Rust ในเรื่อง Slice ถูกออกแบบให้ตอบโจทย์ 2 อย่างพร้อมกัน คือ Performance และ Safety
+
+ใน Rust Slice คือการอ้างอิงไปยังข้อมูลบางส่วนของข้อมูลเดิม โดยไม่จำเป็นต้องสร้างหรือ Copy ข้อมูลชุดใหม่ขึ้นมา ทำให้ประหยัด Memory และช่วยให้การทำงานมีประสิทธิภาพมากขึ้น อย่างไรก็ตาม Slice ไม่ได้เป็นเจ้าของข้อมูลนั้นเอง แต่เป็นเพียงการ Borrow ข้อมูลจากตัวแปรที่เป็น Owner ดังนั้น Rust จึงใช้แนวคิด Ownership, Borrowing และ Lifetime เพื่อควบคุมว่าข้อมูลสามารถถูกอ้างอิงและใช้งานได้นานแค่ไหน โดย Compiler จะตรวจสอบกฎเหล่านี้ตั้งแต่ Compile Time เพื่อป้องกันปัญหาที่เกี่ยวกับ Memory เช่น การอ้างอิงข้อมูลที่หมดอายุหรือการใช้ข้อมูลผิดช่วงเวลา
+
+ดังนั้น จุดเด่นของ Rust ไม่ได้อยู่ที่การมี Slice เพียงอย่างเดียว แต่คือการออกแบบให้ การอ้างอิงข้อมูลที่มีประสิทธิภาพสามารถใช้งานร่วมกับระบบ Ownership ได้อย่างปลอดภัย ซึ่งเป็นแนวคิดที่แตกต่างจาก Python และ Java ที่เน้นการจัดการ Memory อัตโนมัติ และแตกต่างจาก C/C++ ที่ให้อิสระในการจัดการ Memory มากกว่า
 
 ---
 
