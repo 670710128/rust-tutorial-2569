@@ -37,6 +37,126 @@
 
 ---
 
+## 6. Runnable Code Examples
+
+> **ข้อกำหนด:** Code ทุกตัวต้อง Compile และ Run ได้จริงก่อนนำมาใส่ในเอกสาร
+
+### Example 1 — โจทย์เดียว 3 แนวทาง (Imperative, Functional, OOP-style)
+
+**Purpose:** แก้โจทย์ "หาผลรวมกำลังสองของเลขคู่" ด้วย 3 paradigm เพื่อแสดงว่า Rust เป็นภาษา multi-paradigm
+
+```rust
+// OOP style: struct + impl
+struct NumberList {
+    numbers: Vec<i32>,
+}
+
+impl NumberList {
+    fn new(numbers: Vec<i32>) -> Self {
+        NumberList { numbers }
+    }
+
+    fn sum_even_squares(&self) -> i32 {
+        self.numbers
+            .iter()
+            .filter(|&&n| n % 2 == 0)
+            .map(|&n| n * n)
+            .sum()
+    }
+}
+
+// Imperative style: ตัวแปร mutable + loop
+fn imperative(numbers: &[i32]) -> i32 {
+    let mut total = 0;
+    for &n in numbers {
+        if n % 2 == 0 {
+            total += n * n;
+        }
+    }
+    total
+}
+
+// Functional style: iterator chain ไม่มีตัวแปรที่ถูกแก้ไข
+fn functional(numbers: &[i32]) -> i32 {
+    numbers
+        .iter()
+        .filter(|&&n| n % 2 == 0)
+        .map(|&n| n * n)
+        .sum()
+}
+
+fn main() {
+    let data = vec![1, 2, 3, 4, 5, 6];
+
+    println!("Imperative: {}", imperative(&data));
+    println!("Functional: {}", functional(&data));
+
+    let list = NumberList::new(data);
+    println!("OOP-style:  {}", list.sum_even_squares());
+}
+```
+
+**Expected Output**
+
+```text
+Imperative: 56
+Functional: 56
+OOP-style:  56
+```
+
+**Explanation**
+
+- **Imperative:** ประกาศ `let mut total = 0` แล้ววน `for` เพื่อสะสมค่าทีละรอบ เป็นการบอกคอมพิวเตอร์ว่า "ทำอะไรทีละขั้น" โดยมีการเปลี่ยนค่าตัวแปร (mutable state)
+- **Functional:** ใช้ iterator chain `filter` (เลือกเลขคู่) → `map` (ยกกำลังสอง) → `sum` (รวมค่า) โดยไม่มีตัวแปรที่ถูกแก้ไขเลย
+- **OOP-style:** Rust ไม่มี `class` แต่ใช้ `struct` เก็บข้อมูล และ `impl` กำหนด method (`new`, `sum_even_squares`) เพื่อรวมข้อมูลกับพฤติกรรมไว้ด้วยกัน
+- ทั้ง 3 แบบได้ผลลัพธ์เท่ากันคือ 4 + 16 + 36 = 56
+
+---
+
+### Example 2 — Immutable by default และ Ownership
+
+**Purpose:** แสดงจุดเด่นด้านความปลอดภัยของ Rust ได้แก่ ตัวแปรแก้ค่าไม่ได้โดย default และระบบ ownership
+
+```rust
+fn main() {
+    // ตัวแปรเป็น immutable โดย default
+    let x = 5;
+    println!("x = {}", x);
+
+    // ต้องประกาศ mut ถึงจะแก้ค่าได้
+    let mut y = 5;
+    y += 1;
+    println!("y = {}", y);
+
+    // ownership: การ "move" ค่า
+    let s1 = String::from("Rust");
+    let s2 = s1; // s1 ถูก move ไปให้ s2 แล้ว
+    println!("s2 = {}", s2);
+
+    // ถ้าต้องการใช้ทั้งสองตัว ต้อง clone
+    let s3 = s2.clone();
+    println!("s2 = {}, s3 = {}", s2, s3);
+}
+```
+
+**Expected Output**
+
+```text
+x = 5
+y = 6
+s2 = Rust
+s2 = Rust, s3 = Rust
+```
+
+**Explanation**
+
+- `let x = 5;` ตัวแปรเป็น immutable ถ้าพยายามกำหนดค่าซ้ำ compiler จะแจ้ง error (E0384)
+- `let mut y = 5;` ใส่ `mut` เพื่อบอกว่าตั้งใจให้แก้ค่าได้
+- `let s2 = s1;` เนื่องจาก `String` เก็บข้อมูลบน heap ค่าจึงถูก **move** ไปให้ `s2` และ `s1` ใช้งานต่อไม่ได้ ถ้าเรียกใช้ `s1` อีกจะเกิด error (E0382)
+- `s2.clone()` สร้างสำเนาข้อมูลใหม่ ทำให้ใช้ได้ทั้ง `s2` และ `s3`
+
+---
+
 ## 9. PPL Perspective
 
 > **ส่วนนี้เป็นหัวใจของรายวิชา Principles of Programming Languages**
