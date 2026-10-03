@@ -157,6 +157,175 @@ s2 = Rust, s3 = Rust
 
 ---
 
+## 7. Common Mistakes
+
+### Mistake 1 — ใส่ semicolon ท้ายค่าที่ต้องการ return
+
+**Problem**
+
+ใน Rust บรรทัดสุดท้ายของฟังก์ชันที่ไม่มี `;` คือ expression ที่เป็นค่า return ถ้าใส่ `;` จะกลายเป็น statement และฟังก์ชันคืนค่า `()` แทน
+
+**Incorrect Code**
+
+```rust
+fn add(a: i32, b: i32) -> i32 {
+    a + b;
+}
+
+fn main() {
+    println!("{}", add(2, 3));
+}
+```
+
+**Correct Code**
+
+```rust
+fn add(a: i32, b: i32) -> i32 {
+    a + b
+}
+
+fn main() {
+    println!("{}", add(2, 3));
+}
+```
+
+**Why?**
+
+Rust เป็นภาษา expression-oriented โดย block `{ ... }` ให้ค่าเป็น expression สุดท้าย การใส่ `;` ทำให้ค่าถูกทิ้ง compiler จึงฟ้อง mismatched types (E0308) เพราะประกาศว่าจะคืน `i32` แต่ได้ `()`
+
+---
+
+### Mistake 2 — บวกตัวเลขต่างชนิดกันโดยตรง
+
+**Problem**
+
+Rust ไม่แปลงชนิดตัวเลขให้อัตโนมัติ (no implicit conversion)
+
+**Incorrect Code**
+
+```rust
+fn main() {
+    let a: i32 = 5;
+    let b: f64 = 2.5;
+    let sum = a + b;
+    println!("{}", sum);
+}
+```
+
+**Correct Code**
+
+```rust
+fn main() {
+    let a: i32 = 5;
+    let b: f64 = 2.5;
+    let sum = a as f64 + b;
+    println!("{}", sum);
+}
+```
+
+ผลลัพธ์: `7.5`
+
+**Why?**
+
+Rust เป็น statically typed และ strongly typed ต้องแปลงชนิดด้วย `as` อย่างชัดเจน เพื่อป้องกันข้อผิดพลาดจากการแปลงที่ผู้เขียนไม่ได้ตั้งใจ (error E0277)
+
+---
+
+## 8. Exercises
+
+### Exercise 1 — ผลรวมกำลังสองแบบ Imperative และ Functional
+
+**Problem**
+
+เขียนโปรแกรมหาผลรวมของ 1² + 2² + 3² + 4² + 5² สองแบบ คือ Imperative (ใช้ loop) และ Functional (ใช้ iterator)
+
+**Hint**
+
+แบบ Imperative ใช้ `let mut` กับ `for n in 1..=5` แบบ Functional ใช้ `(1..=5).map(...).sum()`
+
+**Solution**
+
+```rust
+fn main() {
+    // Imperative
+    let mut total = 0;
+    for n in 1..=5 {
+        total += n * n;
+    }
+
+    // Functional
+    let total_f: i32 = (1..=5).map(|n| n * n).sum();
+
+    println!("Imperative: {}", total);
+    println!("Functional: {}", total_f);
+}
+```
+
+ผลลัพธ์:
+
+```text
+Imperative: 55
+Functional: 55
+```
+
+**Explanation**
+
+แบบแรกสะสมค่าในตัวแปร mutable ทีละรอบ แบบที่สองสร้างช่วง 1..=5 แล้วแปลงค่าและรวมด้วย iterator โดยไม่มีตัวแปรที่ถูกแก้ไข ผลลัพธ์เท่ากัน
+
+---
+
+### Exercise 2 — struct และ method
+
+**Problem**
+
+สร้าง `struct Rectangle` ที่มี `width` และ `height` พร้อม method `area()` และ `is_square()` แล้วทดสอบกับสี่เหลี่ยม 2 รูป
+
+**Hint**
+
+ใช้ `impl Rectangle { ... }` และ method รับ `&self`
+
+**Solution**
+
+```rust
+struct Rectangle {
+    width: u32,
+    height: u32,
+}
+
+impl Rectangle {
+    fn new(width: u32, height: u32) -> Self {
+        Rectangle { width, height }
+    }
+
+    fn area(&self) -> u32 {
+        self.width * self.height
+    }
+
+    fn is_square(&self) -> bool {
+        self.width == self.height
+    }
+}
+
+fn main() {
+    let r = Rectangle::new(4, 5);
+    let s = Rectangle::new(3, 3);
+    println!("r: area = {}, square? {}", r.area(), r.is_square());
+    println!("s: area = {}, square? {}", s.area(), s.is_square());
+}
+```
+
+ผลลัพธ์:
+
+```text
+r: area = 20, square? false
+s: area = 9, square? true
+```
+
+**Explanation**
+
+`struct` เก็บข้อมูล ส่วน `impl` กำหนดพฤติกรรม `&self` คือการยืมค่ามาอ่านโดยไม่ย้าย ownership ซึ่งเป็นรูปแบบ OOP-style ของ Rust
+---
+
 ## 9. PPL Perspective
 
 > **ส่วนนี้เป็นหัวใจของรายวิชา Principles of Programming Languages**
