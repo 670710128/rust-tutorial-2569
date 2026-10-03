@@ -620,32 +620,31 @@ Python ผูกชื่อกับ object และให้ rebind ชื่
 
 **รายละเอียดการใช้ AI**
 
-`[อธิบายว่าใช้ AI ในขั้นตอนใด และสมาชิกตรวจสอบผลลัพธ์อย่างไร]`
- ให้ช่วยเช้คsyntaxขอองcode
+`[นำเอกสารที่เรียนไปให้NotebookLMไปสรุปและนำมาเป็นเกณฑ์ในการวิเคราะห์ภาษาเชิงPPLและใช้Claudeในการช่วยเช็คsyntaxของแต่ละภาษา]`
 ---
 
 ## 14. GitHub Contribution
 
 | Member | Issues | Commits | Pull Requests | Code Reviews | Contribution |
 |---|---:|---:|---:|---:|---|
-| Member 1 | `[จำนวน]` | `[จำนวน]` | `[จำนวน]` | `[จำนวน]` | `[รายละเอียด]` |
-| Member 2 | `[จำนวน]` | `[จำนวน]` | `[จำนวน]` | `[จำนวน]` | `[รายละเอียด]` |
-| Member 3 | `[จำนวน]` | `[จำนวน]` | `[จำนวน]` | `[จำนวน]` | `[รายละเอียด]` |
-| Member 4 | `[จำนวน]` | `[จำนวน]` | `[จำนวน]` | `[จำนวน]` | `[รายละเอียด]` |
+| Member 1 | `0` | `1` | `1` | `1` | `เขียนหัวข้อ Introduction และ Key Concepts, เปิด PR ส่วน Concept, review PR ของ Member 2` |
+| Member 2 | `0` | `1` | `1` | `1` | `เขียน Example 1–2 และทดสอบโค้ดด้วย cargo run, review PR ของ Member 3` |
+| Member 3 | `0` | `4` | `3` | `1` | `เขียนหัวข้อ PPL Perspective และ Rust vs Python, review PR ของ Member 4` |
+| Member 4 | `0` | `1` | `1` | `1` | `เขียน Common Mistakes และ Exercises, review PR ของ Member 1` |
 
 ### Teamwork Reflection
 
 **How did your team collaborate?**
 
-`[อธิบายกระบวนการทำงานร่วมกัน]`
+`เราได้นัดกันมาทำและแบ่งหน้าที่ตามของแต่ละคนและทำการรวมงานเพื่อนเอาversionที่สมบูรณ์ส่ง`
 
 **Problems encountered**
 
-`[ปัญหาที่พบ]`
+`บางทีเพื่อนเอาไปแก้แล้วcodeบางส่วนที่เคยทำขาดหาย`
 
 **How did you solve them?**
 
-`[วิธีแก้ปัญหา]`
+`ปรึกษาและคอยupdateงานกันตลอดเวลา`
 
 ---
 
@@ -671,12 +670,12 @@ Python ผูกชื่อกับ object และให้ rebind ชื่
 
 ## Submission Information
 
-**Repository:** `[GitHub repository URL]`
+**Repository:** `[https://github.com/soonklang/rust-tutorial-2569]`
 
-**Chapter Path:** `[เช่น chapters/01-variables-mutability-data-types/]`
+**Chapter Path:** `[03-variables-mutability-data-types/]`
 
-**Final PR:** `#[PR number]`
+**Final PR:** ``
 
-**Submitted by:** `[Group XX]`
+**Submitted by:** `[Group 03]`
 
-**Date:** `[YYYY-MM-DD]`
+**Date:** `[2026-10-03]`
