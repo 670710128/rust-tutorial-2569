@@ -620,7 +620,8 @@ Python ผูกชื่อกับ object และให้ rebind ชื่
 
 **รายละเอียดการใช้ AI**
 
-`[นำเอกสารที่เรียนไปให้NotebookLMไปสรุปและนำมาเป็นเกณฑ์ในการวิเคราะห์ภาษาเชิงPPLและใช้Claudeในการช่วยเช็คsyntaxของแต่ละภาษา]`
+นำเอกสารที่เรียนไปให้ NotebookLM สรุป และนำมาเป็นเกณฑ์ในการวิเคราะห์ภาษาเชิง PPL และใช้ Claude ช่วยเช็ค syntax ของแต่ละภาษา
+
 ---
 
 ## 14. GitHub Contribution
@@ -670,12 +671,12 @@ Python ผูกชื่อกับ object และให้ rebind ชื่
 
 ## Submission Information
 
-**Repository:** `[https://github.com/soonklang/rust-tutorial-2569]`
+**Repository:** https://github.com/soonklang/rust-tutorial-2569
 
-**Chapter Path:** `[03-variables-mutability-data-types/]`
+**Chapter Path:** `03-variables-mutability-data-types/`
 
 **Final PR:** ``
 
-**Submitted by:** `[Group 03]`
+**Submitted by:** `Group 03`
 
-**Date:** `[2026-10-03]`
+**Date:** `2026-10-03`
