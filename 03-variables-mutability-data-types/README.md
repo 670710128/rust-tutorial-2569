@@ -604,7 +604,8 @@ Python ผูกชื่อกับ object และให้ rebind ชื่
 
 | AI Tool | Purpose | How the Result Was Verified |
 |---|---|---|
-| `[Notebook Ml]` | `[ใชเพื่อค้นหาข้อมูลและเปรียบเทียบข้อมูลเชิงppl]` | `[ตรวจสอบอย่างไร]` |
+| `Notebook Lm` | `ใชเพื่อค้นหาข้อมูลและเปรียบเทียบข้อมูลเชิงppl` | `ตรวจสอบความถูกต้องโดยเทียบกับไฟลืเอกสารที่ใช้เรียนในรายวิชาprinciple program langaugeเป็นหลัก` |
+| `Claude` | `เขียนโค๊ดเปรียบเทียบระหว่างRustกับPython` | `ช่วยเช็คsyntaxและlogicการเขียนcodeทั้งสองภาษา` |
 
 ### Declaration
 
@@ -646,21 +647,21 @@ Python ผูกชื่อกับ object และให้ rebind ชื่
 
 ## 15. Final Checklist
 
-- [ ] Learning Objectives ครบ 3–4 ข้อ
-- [ ] Key Concepts ครบถ้วน
-- [ ] Syntax / Rules
-- [ ] Runnable Code Examples
-- [ ] Code Compile และ Run ได้จริง
-- [ ] Common Mistakes
-- [ ] Exercises 2 ข้อ พร้อม Solutions
-- [ ] PPL Perspective
-- [ ] Rust vs Other Language
-- [ ] References อย่างน้อย 4 แหล่ง
-- [ ] AI Usage Declaration
-- [ ] GitHub Contribution
-- [ ] สมาชิกทั้ง 4 คนมีส่วนร่วม
-- [ ] สมาชิกทั้ง 4 คนพร้อมนำเสนอคนละ 5 นาที
-- [ ] สมาชิกทุกคนสามารถอธิบาย Code ของกลุ่มได้
+- [x] Learning Objectives ครบ 3–4 ข้อ
+- [x] Key Concepts ครบถ้วน
+- [x] Syntax / Rules
+- [x] Runnable Code Examples
+- [x] Code Compile และ Run ได้จริง
+- [x] Common Mistakes
+- [x] Exercises 2 ข้อ พร้อม Solutions
+- [x] PPL Perspective
+- [x] Rust vs Other Language
+- [x] References อย่างน้อย 4 แหล่ง
+- [x] AI Usage Declaration
+- [x] GitHub Contribution
+- [x] สมาชิกทั้ง 4 คนมีส่วนร่วม
+- [x] สมาชิกทั้ง 4 คนพร้อมนำเสนอคนละ 5 นาที
+- [x] สมาชิกทุกคนสามารถอธิบาย Code ของกลุ่มได้
 
 ---
 
