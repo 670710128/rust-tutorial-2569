@@ -149,7 +149,7 @@ int main() {
 |---|---|---:|
 | Member 1 | Concept + Short Code Illustration | 5 min |
 | Member 2 | Detailed Code + Live Demo | 5 min |
-| 10.00-15.00 | Rust vs Other Language + PPL Analysis | 5 min |
+| Member 3 | Rust vs Other Language + PPL Analysis | 5 min |
 | Member 4 | Exercises + Common Mistakes + Challenge | 5 min |
 
 ### Individual Contribution
