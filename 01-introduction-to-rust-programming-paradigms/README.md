@@ -156,11 +156,11 @@ int main() {
 
 **Member 1**
 
-`[สิ่งที่รับผิดชอบ]`
+Concept + Short Code Illustration
 
 **Member 2**
 
-`[สิ่งที่รับผิดชอบ]`
+Detailed Code + Live Demo
 
 **Member 3**
 
@@ -168,7 +168,7 @@ Githup และ PowerPoint ในส่วนของ Rust vs Other Language +
 
 **Member 4**
 
-`[สิ่งที่รับผิดชอบ]`
+Exercies, Common Mistakes, Challenge
 
 > สมาชิกทุกคนต้องสามารถอธิบาย Code ของกลุ่มได้ ไม่ใช่เฉพาะส่วนที่ตนเองเขียน
 
