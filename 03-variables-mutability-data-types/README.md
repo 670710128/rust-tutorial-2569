@@ -604,7 +604,7 @@ Python ผูกชื่อกับ object และให้ rebind ชื่
 
 | AI Tool | Purpose | How the Result Was Verified |
 |---|---|---|
-| `[AI tool]` | `[ใช้เพื่ออะไร]` | `[ตรวจสอบอย่างไร]` |
+| `[Notebook Ml]` | `[ใชเพื่อค้นหาข้อมูลและเปรียบเทียบข้อมูลเชิงppl]` | `[ตรวจสอบอย่างไร]` |
 
 ### Declaration
 
