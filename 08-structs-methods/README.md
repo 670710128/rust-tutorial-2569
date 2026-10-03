@@ -1270,12 +1270,12 @@ def main():
 
 ## Submission Information
 
-**Repository:** `[https://github.com/soonklang/rust-tutorial-2569/tree/main/08-structs-methods]`
+**Repository:** `[https://github.com/670710140/Project_Topic_Structs-Methods]`
 
-**Chapter Path:** `[เช่น chapters/01-introduction/]`
+**Chapter Path:** `[08-structs-methods/]`
 
 **Final PR:** `#[PR number]`
 
 **Submitted by:** `[Group 8]`
 
-**Date:** `[YYYY-MM-DD]`
+**Date:** `[2026-10-03]`
