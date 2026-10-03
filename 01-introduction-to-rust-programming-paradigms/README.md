@@ -107,7 +107,7 @@ fn main() {
 }
 ```
 
-### `[Other Language]` Example
+### `[C++]` Example
 
 ```C++
 #include <iostream>
