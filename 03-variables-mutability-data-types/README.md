@@ -604,7 +604,7 @@ Python ผูกชื่อกับ object และให้ rebind ชื่
 
 | AI Tool | Purpose | How the Result Was Verified |
 |---|---|---|
-| `Notebook Lm` | `ใชเพื่อค้นหาข้อมูลและเปรียบเทียบข้อมูลเชิงppl` | `ตรวจสอบความถูกต้องโดยเทียบกับไฟลืเอกสารที่ใช้เรียนในรายวิชาprinciple program langaugeเป็นหลัก` |
+| `NotebookLM` | `ใชเพื่อค้นหาข้อมูลและเปรียบเทียบข้อมูลเชิงppl` | `ตรวจสอบความถูกต้องโดยเทียบกับไฟล์เอกสารที่ใช้เรียนในรายวิชาPrincipleProgramLangaugeเป็นหลัก` |
 | `Claude` | `เขียนโค๊ดเปรียบเทียบระหว่างRustกับPython` | `ช่วยเช็คsyntaxและlogicการเขียนcodeทั้งสองภาษา` |
 
 ### Declaration
