@@ -388,7 +388,7 @@ Rust ถูกออกแบบมาเพื่อแก้ปัญหา "�
 |---|---|---|
 | Syntax | C-style, เน้น Expression-oriented | C-style, เน้น Statement-oriented |
 | Semantics / Behavior | ตัวแปรเป็น Immutable โดยค่าเริ่มต้น (ต้องระบุ mut เพื่อให้แก้ค่าได้) | ตัวแปรเป็น Mutable โดยค่าเริ่มต้น (ต้องระบุ const เพื่อไม่ให้แก้ค่าได้) |
-| Type System | Static & Strong, มี Type inference และไม่มี Implicit conversion ที่เสี่ยงต่อข้อมูลหาย | Static & Strong, อนุญาตให้ทำ Implicit conversion ได้หลายกรณี (เช่น int เป็น float) |
+| Type System | Static & Strong, มี Type inference และไม่มี Implicit conversion ที่เสี่ยงต่อข้อมูลหาย และไม่มีแนวคิด Null Pointer | Static & Strong, อนุญาตให้ทำ Implicit conversion ได้หลายกรณี (เช่น int เป็น float) |
 | Memory Management | จัดการผ่านระบบ Ownership และ Borrow Checker ในตอน Compile-time (ไม่มี GC) | จัดการด้วยตนเอง (new/delete) หรือใช้ Smart Pointers (RAII) เพื่อช่วยจัดการ |
 | Safety | การันตี Memory Safety และ Thread Safety ตั้งแต่ตอน Compile จะไม่เกิด Segfaults ถ้าไม่ใช้ unsafe block | ไม่มีระบบป้องกันที่เข้มงวด โปรแกรมเมอร์ต้องรับผิดชอบเรื่อง Memory Leak, Dangling Pointers และ Data Races เอง |
 
