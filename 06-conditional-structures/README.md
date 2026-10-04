@@ -680,10 +680,10 @@ Python ไม่ต้องมี function ครอบ, ใช้ indentation 
 
 | Member | Issues | Commits | Pull Requests | Code Reviews | Contribution |
 | :--- | :---: | :---: | :---: | :---: | :--- |
-| **Member 1** <br> (นางสาวธนัญญา พรมภักดี) | 1 | 4 | 1 | 2 | สรุปและเขียนเนื้อหาบทเรียนส่วน Concept + Short Code บน Markdown |
-| **Member 2** <br> (นายธีทัต สุจริตพาณิช) | 1 | 3 | 2 | 2 | เรียบเรียงเนื้อหา Detailed Code และอัปโหลดไฟล์โค้ดสำหรับ Live Demo |
-| **Member 3** <br> (นายทิบดี ช้างทอง) | 1 | 3 | 1 | 2 | สรุปส่วน Rust vs Other Languages และเขียนวิเคราะห์เชิง PPL |
-| **Member 4** <br> (นายนนธวัช งามบุญศิริสิงห์) | 1 | 6 | 1 | 2 | จัดทำโครงสร้าง Repository, เขียนแบบฝึกหัด (Exercises) และทดสอบโค้ด |
+| **Member 1** <br> (นางสาวธนัญญา พรมภักดี) | 0 | 4 | 3 | 1 | สรุปและเขียนเนื้อหาบทเรียนส่วน Concept + Short Code บน Markdown |
+| **Member 2** <br> (นายธีทัต สุจริตพาณิช) | 0 | 3 | 1 | 0 | เรียบเรียงเนื้อหา Detailed Code และอัปโหลดไฟล์โค้ดสำหรับ Live Demo |
+| **Member 3** <br> (นายทิบดี ช้างทอง) | 0 | 3 | 0 | 0 | สรุปส่วน Rust vs Other Languages และเขียนวิเคราะห์เชิง PPL |
+| **Member 4** <br> (นายนนธวัช งามบุญศิริสิงห์) | 0 | 52 | 0 | 0 | จัดทำโครงสร้าง Repository, เขียนแบบฝึกหัด (Exercises) และทดสอบโค้ด |
 
 ---
 
