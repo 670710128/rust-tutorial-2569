@@ -33,7 +33,7 @@
 
 ## 3. Introduction
 
-`[เขียนเนื้อหาที่นี่ — ใช้โครงสร้างเดียวกับ rust_tutorial_template.md ฉบับเต็มที่ผู้สอนแจกให้]`
+Rust เป็นภาษาโปรแกรมระบบ (Systems Programming Language) ที่พัฒนาโดย Mozilla ซึ่งปัจจุบันอยู่ในการดูแลโดย Rust Foundation โดยมีเป้าหมายหลักคือการมอบความเร็วและความปลอดภัยของหน่วยความจำโดยไม่ต้องพึ่งพา Garbage Collector (GC) เหมือนภาษาอย่าง Python, Java 
 
 ---
 
