@@ -12,7 +12,7 @@
 | # | Name | Student ID | GitHub Username | Main Responsibility |
 |---|---|---|---|---|
 | 1 | นางสาวขวัญฐิตา การดี | 650710069 | `@650710069` | Concept + Short Code Illustration (สรุปแนวคิดหลัก + โค้ดตัวอย่างสั้น) |
-| 2 | นายคีญภัสน์ แก้วผ่อง | 660710072 | `@[กรอก GitHub username]` | Detailed Code + Live Demo (โค้ดเชิงลึก + สาธิตสด) |
+| 2 | นายคีญภัสน์ แก้วผ่อง | 660710072 | `@660710072` | Detailed Code + Live Demo (โค้ดเชิงลึก + สาธิตสด) |
 | 3 | นายจักรภพ ภูมิพัฒน์ | 660710073 | `@660710073` | Rust vs Other Language + PPL Analysis (เปรียบเทียบภาษา + วิเคราะห์เชิง PPL) |
 | 4 | นายณทรรศน์ พรหมประดิษฐ์ | 660710079 | `@660710079` | Exercises + Common Mistakes + Challenge (แบบฝึกหัด + ข้อผิดพลาดที่พบบ่อย + คำถามท้าทาย) |
 
