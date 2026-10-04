@@ -45,9 +45,9 @@ Rust เป็นภาษาโปรแกรมระบบ (Systems Programm
 
 ### **จุดเด่นของภาษา Rust** ###
 - **1.Memory Safety Without Garbage Collection Rust** - แก้ปัญหาเรื่อง Memory Leak หรือ Dangling Pointers ที่มักเกิดใน C/C++ ผ่านระบบ Ownership, Borrowing, และ Lifetimes โดยตัวตรวจสอบของคอมไพเลอร์ (Borrow Checker) จะตรวจสอบความถูกต้องของการใช้หน่วยความจำตั้งแต่ช่วง Compile-time
-- **2.Fearless Concurrency ** - กฎการจัดการหน่วยความจำที่เข้มงวดช่วยป้องกันปัญหา Data Race (การที่หลาย thread เข้าถึงหน่วยความจำตำแหน่งเดียวกันพร้อมกันโดยไม่มีการจัดระเบียบ) ทำให้การเขียนโปรแกรมแบบทำงานพร้อมกัน (Concurrent Programming) มีความปลอดภัยสูง
-- **3.Zero-Cost Abstractions ** - การใช้ฟีเจอร์ระดับสูง เช่น Iterators, Generics หรือ Closure ไม่ทำให้ประสิทธิภาพการทำงานลดลงเมื่อเทียบกับการเขียนโค้ดระดับล่าง
-- **4.Tooling แบบครบวงจร มี** Cargo ซึ่งเป็นทั้ง Package Manager และ Build System ในตัว ช่วยจัดการ Dependencies, การบิวด์โปรเจกต์, การรัน Test และการสร้าง Documentation ได้อย่างสะดวก
+- **2.Fearless Concurrency ** - คือกฎการจัดการหน่วยความจำที่เข้มงวดช่วยป้องกันปัญหา Data Race (การที่หลาย thread เข้าถึงหน่วยความจำตำแหน่งเดียวกันพร้อมกันโดยไม่มีการจัดระเบียบ) ทำให้การเขียนโปรแกรมแบบทำงานพร้อมกัน (Concurrent Programming) มีความปลอดภัยสูง
+- **3.Zero-Cost Abstractions ** - คือการใช้ฟีเจอร์ระดับสูง เช่น Iterators, Generics หรือ Closure ไม่ทำให้ประสิทธิภาพการทำงานลดลงเมื่อเทียบกับการเขียนโค้ดระดับล่าง
+- **4.Tooling แบบครบวงจร ** มี Cargo ซึ่งเป็นทั้ง Package Manager และ Build System ในตัว ช่วยจัดการ Dependencies, การบิวด์โปรเจกต์, การรัน Test และการสร้าง Documentation ได้อย่างสะดวก
 
 
 ---
