@@ -41,7 +41,7 @@ Rust เป็นภาษาโปรแกรมระบบ ที่พั�
   - ปี 2012  Mozilla ประกาศพัฒนา Servo ซึ่งเป็น Browser Engine ยุคใหม่ด้วยภาษา Rust เพื่อพิสูจน์ว่า Rust สามารถประมวลผลแบบ Parallelism ได้อย่างปลอดภัย
   - ปี 2014 ได้มีการคิดค้นระบบ Ownership & Borrowing รูปแบบปัจจุบันขึ้นมา เพื่อตัด Garbage Collector ออกไปโดยสิ้นเชิง
   - ปี 2015 ได้ปล่อย Rust 1.0 ออกมาอย่างเป็นทางการ
-  - ปี 2020 - ปัจจุบัน เนื่องจากปัญหาทางการเงิน Mozilla ได้ปลดพนักงานทีม Rust ออกบางส่วน ทำให้บริษัทยักษ์ใหญ่เทคโนโลยี ได้แก่ AWS, Google, Microsoft, Meta และ Huawei ร่วมมือกันก่อตั้ง Rust Foundation ในปี 2021 เพื่อดูแลและสนับสนุนภาษา Rust ในฐานะโครงการ Open Source 
+  - ปี 2020 - ปัจจุบัน เนื่องจากปัญหาทางการเงิน Mozilla ได้ปลดพนักงานทีม Rust ออกบางส่วน ทำให้บริษัทยักษ์ใหญ่เทคโนโลยี ได้แก่ AWS, Google, Microsoft, Meta และ Huawei ร่วมมือกันก่อตั้ง Rust Foundation เพื่อดูแลและสนับสนุนภาษา Rust ในฐานะโครงการ Open Source 
 
 ### **จุดเด่นของภาษา Rust** ###
 - **1.Memory Safety** - แก้ปัญหาเรื่อง Memory Leak หรือ Dangling Pointers ที่มักเกิดใน C/C++ ผ่านระบบ Ownership, Borrowing, และ Lifetimes โดยตัวตรวจสอบของคอมไพเลอร์ Borrow Checker จะตรวจสอบความถูกต้องของการใช้หน่วยความจำตั้งแต่ช่วง Compile
@@ -51,7 +51,7 @@ Rust เป็นภาษาโปรแกรมระบบ ที่พั�
 
 
 ---
-## Key Concept ##
+## 4. Key Concept ##
 ___
 
 ## 6. Runnable Code Examples
