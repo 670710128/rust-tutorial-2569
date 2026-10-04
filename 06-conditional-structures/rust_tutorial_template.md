@@ -723,12 +723,12 @@ Python ไม่ต้องมี function ครอบ, ใช้ indentation 
 
 ## Submission Information
 
-**Repository:** `[GitHub repository URL]`
+**Repository:** `[https://github.com/670710130/rust-tutorial-2569/tree/main/06-conditional-structures]`
 
-**Chapter Path:** `[เช่น chapters/01-introduction/]`
+**Chapter Path:** `[rust-tutorial-2569/tree/main/06-conditional-structures/]`
 
 **Final PR:** `#[PR number]`
 
-**Submitted by:** `[Group XX]`
+**Submitted by:** `[Group 06]`
 
-**Date:** `[YYYY-MM-DD]`
+**Date:** `[2026-10-04]`
